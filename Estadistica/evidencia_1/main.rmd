@@ -3,4 +3,11 @@ title: "Evidencia Estadistica"
 output: pdf_document
 ---
 
-# Aha ha
+# Importacion de datos
+```{r}
+salaries <- read.csv("ds_salaries.csv")
+sum <- summary(salaries)
+mode(salaries$salary)
+print(sum)
+
+```
