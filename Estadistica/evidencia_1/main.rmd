@@ -6,8 +6,7 @@ output: pdf_document
 # Importacion de datos
 ```{r}
 salaries <- read.csv("ds_salaries.csv")
-sum <- summary(salaries)
+summ <- summary(salaries)
 mode(salaries$salary)
-print(sum)
-
+print(summ)
 ```
