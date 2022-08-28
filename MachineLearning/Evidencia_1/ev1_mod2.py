@@ -14,16 +14,23 @@ def predict_all_classes(X_, thetas):
     return p.index(max(p)) + 1
 
 
-def predict_single_class(x, k, thetas):
-    return h(x, thetas[k])
-
-
 def h(x, theta, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12):
     return 1 / (1 + m.exp(-(
-                theta[0] + theta[1] * x + theta[2] * x1 + theta[3] * x2 + theta[4] * x3 + theta[5] * x4 + theta[
-            6] * x5 + theta[7] * x6 + theta[8] * x7 + theta[9] * x8 + theta[10] * x9 + theta[11] * x10 + theta[
-                    12] * x11 + theta[13] * x12)))
+            theta[0] + theta[1] * x + theta[2] * x1 + theta[3] * x2 + theta[4] * x3 + theta[5] * x4 + theta[
+        6] * x5 + theta[7] * x6 + theta[8] * x7 + theta[9] * x8 + theta[10] * x9 + theta[11] * x10 + theta[
+                12] * x11 + theta[13] * x12)))
 
+
+print("\n----------------------------------------------------------")
+print("Momento de Retroalimentación: Módulo 2")
+print("----------------------------------------------------------")
+print("Facundo Vecchi A01283666 - Ricardo Arriaga A01570553")
+print("----------------------------------------------------------")
+print("Base de datos siendo utilizada: Wine")
+print("Columnas utilizadas para el entrenamiento del modelo: 13")
+print("----------------------------------------------------------")
+print("El modelo utilizado es el de regresión logística")
+print("----------------------------------------------------------")
 
 cols = ["Class", "Alcohol", "Malic acid", "Ash", "Alcalinity of ash", "Magnesium", "Total phenols", "Flavanoids",
         "Nonflavanoid phenols", "Proanthocyanins", "Color intensity", "Hue", "OD280/OD315 of diluted wines", "Proline"]
@@ -38,22 +45,29 @@ y_ = df.Class.values
 np.random.seed(42)
 X_train, X_test, y_train, y_test = train_test_split(X_, y_)
 
-alpha = 0.00001
-iters = 200
+alpha = 0.00005
+iters = 300
 thetas = np.full((n_wine_class, 14), 0.00001)
 
 n_train = len(y_train)
 
-print("\nTraining...")
+print("\nEntrenando el modelo... (Este proceso puede tardar unos minutos)")
 for k in range(n_wine_class):
     for idx in range(iters):
-        acumDelta = {"x_": [], "x": [],
+        acumDelta = {"x_": [], "x0": [],
                      "x1": [], "x2": [],
                      "x3": [], "x4": [],
                      "x5": [], "x6": [],
                      "x7": [], "x8": [],
                      "x9": [], "x10": [],
                      "x11": [], "x12": []}
+        sJt = {"x_": [], "x0": [],
+               "x1": [], "x2": [],
+               "x3": [], "x4": [],
+               "x5": [], "x6": [],
+               "x7": [], "x8": [],
+               "x9": [], "x10": [],
+               "x11": [], "x12": []}
         for (i_row, X), y in zip(X_train.iterrows(), y_train):
             if y != (k + 1):
                 # print(k+1, y, 'replaced')
@@ -64,74 +78,36 @@ for k in range(n_wine_class):
 
             acumDelta['x_'].append(
                 h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10, X.x11, X.x12) - y)
-            acumDelta['x'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10, X.x11,
-                                     X.x12) - y) * X.x)
-            acumDelta['x1'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x1)
-            acumDelta['x2'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x2)
-            acumDelta['x3'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x3)
-            acumDelta['x4'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x4)
-            acumDelta['x5'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x5)
-            acumDelta['x6'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x6)
-            acumDelta['x7'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x7)
-            acumDelta['x8'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x8)
-            acumDelta['x9'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                      X.x11, X.x12) - y) * X.x9)
-            acumDelta['x10'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                       X.x11, X.x12) - y) * X.x10)
-            acumDelta['x11'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                       X.x11, X.x12) - y) * X.x11)
-            acumDelta['x12'].append((h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10,
-                                       X.x11, X.x12) - y) * X.x12)
 
-        sJt_ = sum(acumDelta['x_'])
-        sJt0 = sum(acumDelta['x'])
-        sJt1 = sum(acumDelta['x1'])
-        sJt2 = sum(acumDelta['x2'])
-        sJt3 = sum(acumDelta['x3'])
-        sJt4 = sum(acumDelta['x4'])
-        sJt5 = sum(acumDelta['x5'])
-        sJt6 = sum(acumDelta['x6'])
-        sJt7 = sum(acumDelta['x7'])
-        sJt8 = sum(acumDelta['x8'])
-        sJt9 = sum(acumDelta['x9'])
-        sJt10 = sum(acumDelta['x10'])
-        sJt11 = sum(acumDelta['x11'])
-        sJt12 = sum(acumDelta['x12'])
+            for i in range(13):
+                acumDelta['x' + str(i)].append(
+                    (h(X.x, thetas[k], X.x1, X.x2, X.x3, X.x4, X.x5, X.x6, X.x7, X.x8, X.x9, X.x10, X.x11, X.x12) - y) *
+                    X.iloc[i])
 
-        thetas[k][0] = thetas[k][0] - alpha / n_train * sJt_
-        thetas[k][1] = thetas[k][1] - alpha / n_train * sJt0
-        thetas[k][2] = thetas[k][2] - alpha / n_train * sJt1
-        thetas[k][3] = thetas[k][3] - alpha / n_train * sJt2
-        thetas[k][4] = thetas[k][4] - alpha / n_train * sJt3
-        thetas[k][5] = thetas[k][5] - alpha / n_train * sJt4
-        thetas[k][6] = thetas[k][6] - alpha / n_train * sJt5
-        thetas[k][7] = thetas[k][7] - alpha / n_train * sJt6
-        thetas[k][8] = thetas[k][8] - alpha / n_train * sJt7
-        thetas[k][9] = thetas[k][9] - alpha / n_train * sJt8
-        thetas[k][10] = thetas[k][10] - alpha / n_train * sJt9
-        thetas[k][11] = thetas[k][11] - alpha / n_train * sJt10
-        thetas[k][12] = thetas[k][12] - alpha / n_train * sJt11
-        thetas[k][13] = thetas[k][13] - alpha / n_train * sJt12
+        sJt['x_'] = sum(acumDelta['x_'])
+        for i in range(13):
+            sJt['x' + str(i)] = sum(acumDelta['x' + str(i)])
 
+        thetas[k][0] = thetas[k][0] - alpha / n_train * sJt['x_']
+        for i in range(1, 14):
+            thetas[k][i] = thetas[k][i] - (alpha / n_train) * sJt['x' + str(i - 1)]
+
+print("\n----------------------------------------------------------")
+print("Modelo entrenado")
+print("----------------------------------------------------------")
+print("Thetas:")
 print(thetas)
+print("\n----------------------------------------------------------")
+print("Metricas de evaluacion:")
 
 predicts = []
 for idx, value in X_.iterrows():
     predicts.append(predict_all_classes(value, thetas))
 
-print(y_)
-print(predicts)
 acc, hits, misses = mt.accuracy_simple(predicts, y_)
 print('Accuracy:', acc, '%')
 print('Hits:', hits)
 print('Misses:', misses)
 
+print("\n")
 os.system('pause')
