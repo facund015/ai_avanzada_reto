@@ -115,3 +115,10 @@ for (col in names(salaries)){
   cat("NAs: " , sum(is.na(salaries[,col])), "\n")
 }
 ```
+# Preparacion de datos
+Para nuestras predicciones hemos decidido eliminar las columnas de
+salario y tipo de moneda, ya que buscamos mantener un estandar.
+```{r}
+salaries_clean <- subset(salaries, select = -c(salary, salary_currency))
+```
+
