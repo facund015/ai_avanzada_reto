@@ -6,6 +6,20 @@
   <component name="RMarkdownSettings">
     <option name="renderProfiles">
       <map>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/Tiempos_de_secado.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Tarea_1.Rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/main.rmd">
           <value>
             <RMarkdownRenderProfile>

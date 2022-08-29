@@ -1,19 +1,23 @@
 ---
-title: "Evidencia Estadistica"
+title: "Momento de Retroalimentacion Estadistica"
 output: pdf_document
+author: "Facundo Vecchi A01283666 - Ricardo Arriaga A01570553"
 ---
 
 # Importacion de datos
 ```{r}
+library(dplyr)
+library(data.table)
+library(modeest)
+
 salaries <- read.csv("ds_salaries.csv")
 salaries <- subset(salaries, select = -X)
 ```
 # Medidas de tendencia central y dispersión
 ```{r}
-library(modeest)
 
 for (col in names(salaries)) {
-  if (class(salaries[,col]) == "integer") {
+  if (class(salaries[, col]) == "integer") {
     c <- nchar(col)
     cl <- 0
     cr <- 0
@@ -26,18 +30,20 @@ for (col in names(salaries)) {
     }
 
 
-    cat(strrep('-', 30-cl), col, strrep('-', 30-cr), "\n")
-    cat("Promedio: ", mean(salaries[,col]), " ",
-        "Mediana: ", median(salaries[,col]), " ",
-        "Moda: ", mfv(salaries[,col]), "\n")
-    cat("Desviacion estandar: ", sd(salaries[,col]), " ", "Varianza: ", var(salaries[,col]), "\n")
-    cat("Minimo: ", min(salaries[,col]), " ", "Maximo: ", max(salaries[,col]), "\n")
+    cat(strrep('-', 30 - cl), col, strrep('-', 30 - cr), "\n")
+    cat("Promedio: ", mean(salaries[, col]), " ",
+        "Mediana: ", median(salaries[, col]), " ",
+        "Moda: ", mfv(salaries[, col]), "\n")
+    cat("Desviacion estandar: ", sd(salaries[, col]),
+        " ", "Varianza: ", var(salaries[, col]), "\n")
+    cat("Minimo: ", min(salaries[, col]), " ",
+        "Maximo: ", max(salaries[, col]), "\n")
     cat("\n")
   }
 }
 
 for (col in names(salaries)) {
-  if (class(salaries[,col]) == "character") {
+  if (class(salaries[, col]) == "character") {
     c <- nchar(col)
     cl <- 0
     cr <- 0
@@ -50,10 +56,10 @@ for (col in names(salaries)) {
     }
 
 
-    cat(strrep('-', 30-cl), col, strrep('-', 30-cr), "\n")
-    cat("Moda: ", mfv(salaries[,col]), "\n")
+    cat(strrep('-', 30 - cl), col, strrep('-', 30 - cr), "\n")
+    cat("Moda: ", mfv(salaries[, col]), "\n")
     cat("\n")
-    print(table(salaries[,col]))
+    print(table(salaries[, col]))
     cat("\n")
   }
 }
@@ -61,9 +67,9 @@ for (col in names(salaries)) {
 # Medidas de distribución y medidas de posicion
 ```{r}
 
-for (col in names(salaries)){
-  if (class(salaries[,col]) == "integer"){
-    x <- salaries[,col]
+for (col in names(salaries)) {
+  if (class(salaries[, col]) == "integer") {
+    x <- salaries[, col]
     q <- quantile(x, c(0.25, 0.75))
     ri <- q[2] - q[1]
 
@@ -71,35 +77,36 @@ for (col in names(salaries)){
     cl <- 0
     cr <- 0
     if (c %% 2 != 0) {
-        cl <- c / 2
-        cr <- c / 2
-        } else {
-        cl <- c / 2
-        cr <- c / 2 + 1
+      cl <- c / 2
+      cr <- c / 2
+    } else {
+      cl <- c / 2
+      cr <- c / 2 + 1
     }
 
 
-    cat(strrep('-', 30-cl), col, strrep('-', 30-cr), "\n")
+    cat(strrep('-', 30 - cl), col, strrep('-', 30 - cr), "\n")
     cat("Quartil 1: ", q[1], " ", "Quartil 3: ", q[2], "\n")
-    boxplot(x, main=col, las=2, xlab="", ylab="", horizontal = TRUE)
-    abline(v=q[1] - 1.5*ri, lty=2, col="red")
-    abline(v=q[2] + 1.5*ri, lty=2, col="red")
-    abline(v=q[1] - 3*ri, lty=2, col="blue")
-    abline(v=q[2] + 3*ri, lty=2, col="blue")
+    boxplot(x, main = col, las = 2, xlab = "", ylab = "", horizontal = TRUE)
+    abline(v = q[1] - 1.5 * ri, lty = 2, col = "red")
+    abline(v = q[2] + 1.5 * ri, lty = 2, col = "red")
+    abline(v = q[1] - 3 * ri, lty = 2, col = "blue")
+    abline(v = q[2] + 3 * ri, lty = 2, col = "blue")
   }
 }
 
-for (col in names(salaries)){
-  if (class(salaries[,col]) == "character"){
-    x <- table(salaries[,col])
-    barplot(x, main=col, las=2, xlab="", ylab="")
+for (col in names(salaries)) {
+  if (class(salaries[, col]) == "character") {
+    x <- table(salaries[, col])
+    barplot(x, main = col, las = 2, xlab = "", ylab = "")
   }
 }
 
 ```
+
 # Calidad de datos
 ```{r}
-for (col in names(salaries)){
+for (col in names(salaries)) {
   c <- nchar(col)
   cl <- 0
   cr <- 0
@@ -110,15 +117,125 @@ for (col in names(salaries)){
     cl <- c / 2
     cr <- c / 2 + 1
   }
-  cat(strrep('-', 30-cl), col, strrep('-', 30-cr), "\n")
+  cat(strrep('-', 30 - cl), col, strrep('-', 30 - cr), "\n")
 
-  cat("NAs: " , sum(is.na(salaries[,col])), "\n")
+  cat("NAs: ", sum(is.na(salaries[, col])), "\n")
 }
 ```
 # Preparacion de datos
 Para nuestras predicciones hemos decidido eliminar las columnas de
-salario y tipo de moneda, ya que buscamos mantener un estandar.
+salario y tipo de moneda, ya que buscamos mantener un estandar en
+cuanto a los salarios.
 ```{r}
 salaries_clean <- subset(salaries, select = -c(salary, salary_currency))
 ```
 
+# Pregunta 1
+¿Cuál es el salario al que pueda aspirar un analista de datos?
+```{r}
+salaries_da_x <- salaries_clean[salaries_clean$job_title == "Data Analyst", "salary_in_usd"]
+
+salary_mean <- mean(salaries_da_x)
+salary_sd <- sd(salaries_da_x)
+salary_inters <- t.test(x = salaries_da_x, conf.level = 0.97)$conf.int
+
+salaries_da_x_ <- seq(min(salaries_da_x), max(salaries_da_x), 1000)
+salaries_da_y <- dnorm(salaries_da_x_, salary_mean, salary_sd)
+
+hist(salaries_da_x, prob = TRUE, main = "Histograma de probabilidad de Salarios",
+     xlab = "Salario",
+     ylab = "Probabilidad",
+     col = 0,
+     xlim = c(min(salaries_da_x), max(salaries_da_x)))
+lines(salaries_da_x_, salaries_da_y, col = "black")
+abline(v = salary_mean, lty = 1, col = "red")
+abline(v = salary_inters, lty = 2, col = "green")
+legend("topright",
+       legend = c("Media", "Intervalo de confianza"),
+       col = c("red", "green"),
+       lty = c(1, 2))
+
+cat("En general, el salario al que puede aspirar un analista de datos es:",
+    salary_mean, "USD\n",
+    "La confianza en el salario al que puede aspirar un analista de datos es: \n",
+    salary_inters[1], "USD -", salary_inters[2], "USD\n")
+```
+
+# Pregunta 2
+¿En qué países se ofrecen mejores salarios?
+```{r}
+
+
+ISO_3166 <- fread("ISO-3166.csv", select = c("alpha-2", "name"))
+
+salaries_country <- salaries_clean %>%
+  group_by(company_location) %>%
+  summarise(title_salary_mean = mean(salary_in_usd))
+
+salaries_country <- salaries_country[order(-salaries_country$title_salary_mean),]
+
+barplot(salaries_country$title_salary_mean,
+        names.arg = salaries_country$company_location,
+        main = "Mejores salarios por pais",
+        xlab = "Pais",
+        ylab = "Salario")
+
+final_salaries <- data.table("Alias" = character(), "Pais" = character(), "Salario" = double())
+for (i in 1:5) {
+  name <- ISO_3166[ISO_3166$`alpha-2` == salaries_country$company_location[i], "name"]
+  new_row <- data.table("Alias" = salaries_country$company_location[i],
+                        "Pais" = name$name,
+                        "Salario" = salaries_country$title_salary_mean[i])
+  final_salaries <- rbind(final_salaries, new_row)
+}
+cat("\n")
+cat("En general, los mejores salarios son en:", "\n")
+print(final_salaries)
+```
+# Pregunta 3
+¿Que tanto afecta los salarios dependiendo del radio de trabajo remoto?
+```{r}
+titles <- unique(salaries_clean$job_title)
+
+title_salary_remote <- salaries_clean %>%
+  group_by(job_title, remote_ratio) %>%
+  summarise(title_salary_mean = mean(salary_in_usd), .groups = 'drop')
+
+title_salary_remote_0 <- title_salary_remote[title_salary_remote$remote_ratio == 0,]
+title_salary_remote_50 <- title_salary_remote[title_salary_remote$remote_ratio == 50,]
+title_salary_remote_100 <- title_salary_remote[title_salary_remote$remote_ratio == 100,]
+
+acum_0_50 <- c()
+acum_50_100 <- c()
+acum_0_100 <- c()
+
+for (title in titles) {
+  title_salary_remote_0_ <- title_salary_remote_0[title_salary_remote_0$job_title == title,]
+  title_salary_remote_50_ <- title_salary_remote_50[title_salary_remote_50$job_title == title,]
+  title_salary_remote_100_ <- title_salary_remote_100[title_salary_remote_100$job_title == title,]
+
+
+  if (nrow(title_salary_remote_100_) != 0 & nrow(title_salary_remote_0_) != 0) {
+    acum_0_100 <- append(acum_0_100,
+                         title_salary_remote_100_$title_salary_mean[1] /
+                                 title_salary_remote_0_$title_salary_mean[1] - 1)
+  }
+  if (nrow(title_salary_remote_50_) != 0 & nrow(title_salary_remote_0_) != 0) {
+    acum_0_50 <- append(acum_0_50,
+                        title_salary_remote_50_$title_salary_mean[1] /
+                                title_salary_remote_0_$title_salary_mean[1] - 1)
+  }
+  if (nrow(title_salary_remote_100_) != 0 & nrow(title_salary_remote_50_) != 0) {
+    acum_50_100 <- append(acum_50_100,
+                          title_salary_remote_100_$title_salary_mean[1] /
+                                  title_salary_remote_50_$title_salary_mean[1] - 1)
+  }
+}
+
+cat("\n")
+cat("En general, el afecto de los salarios dependiendo del radio de trabajo remoto es:",
+    "\n",
+    "0% - 50% remoto:", mean(acum_0_50) * 100, "%\n",
+    "50% - 100% remoto:", mean(acum_50_100) * 100, "%\n",
+    "0% - 100% remoto:", mean(acum_0_100) * 100, "%\n")
+```
