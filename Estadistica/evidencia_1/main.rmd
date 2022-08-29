@@ -6,7 +6,112 @@ output: pdf_document
 # Importacion de datos
 ```{r}
 salaries <- read.csv("ds_salaries.csv")
-summ <- summary(salaries)
-mode(salaries$salary)
-print(summ)
+salaries <- subset(salaries, select = -X)
+```
+# Medidas de tendencia central y dispersión
+```{r}
+library(modeest)
+
+for (col in names(salaries)) {
+  if (class(salaries[,col]) == "integer") {
+    c <- nchar(col)
+    cl <- 0
+    cr <- 0
+    if (c %% 2 != 0) {
+      cl <- c / 2
+      cr <- c / 2
+    } else {
+      cl <- c / 2
+      cr <- c / 2 + 1
+    }
+
+
+    cat(strrep('-', 30-cl), col, strrep('-', 30-cr), "\n")
+    cat("Promedio: ", mean(salaries[,col]), " ",
+        "Mediana: ", median(salaries[,col]), " ",
+        "Moda: ", mfv(salaries[,col]), "\n")
+    cat("Desviacion estandar: ", sd(salaries[,col]), " ", "Varianza: ", var(salaries[,col]), "\n")
+    cat("Minimo: ", min(salaries[,col]), " ", "Maximo: ", max(salaries[,col]), "\n")
+    cat("\n")
+  }
+}
+
+for (col in names(salaries)) {
+  if (class(salaries[,col]) == "character") {
+    c <- nchar(col)
+    cl <- 0
+    cr <- 0
+    if (c %% 2 != 0) {
+      cl <- c / 2
+      cr <- c / 2
+    } else {
+      cl <- c / 2
+      cr <- c / 2 + 1
+    }
+
+
+    cat(strrep('-', 30-cl), col, strrep('-', 30-cr), "\n")
+    cat("Moda: ", mfv(salaries[,col]), "\n")
+    cat("\n")
+    print(table(salaries[,col]))
+    cat("\n")
+  }
+}
+```
+# Medidas de distribución y medidas de posicion
+```{r}
+
+for (col in names(salaries)){
+  if (class(salaries[,col]) == "integer"){
+    x <- salaries[,col]
+    q <- quantile(x, c(0.25, 0.75))
+    ri <- q[2] - q[1]
+
+    c <- nchar(col)
+    cl <- 0
+    cr <- 0
+    if (c %% 2 != 0) {
+        cl <- c / 2
+        cr <- c / 2
+        } else {
+        cl <- c / 2
+        cr <- c / 2 + 1
+    }
+
+
+    cat(strrep('-', 30-cl), col, strrep('-', 30-cr), "\n")
+    cat("Quartil 1: ", q[1], " ", "Quartil 3: ", q[2], "\n")
+    boxplot(x, main=col, las=2, xlab="", ylab="", horizontal = TRUE)
+    abline(v=q[1] - 1.5*ri, lty=2, col="red")
+    abline(v=q[2] + 1.5*ri, lty=2, col="red")
+    abline(v=q[1] - 3*ri, lty=2, col="blue")
+    abline(v=q[2] + 3*ri, lty=2, col="blue")
+  }
+}
+
+for (col in names(salaries)){
+  if (class(salaries[,col]) == "character"){
+    x <- table(salaries[,col])
+    barplot(x, main=col, las=2, xlab="", ylab="")
+  }
+}
+
+```
+# Calidad de datos
+```{r}
+for (col in names(salaries)){
+  c <- nchar(col)
+  cl <- 0
+  cr <- 0
+  if (c %% 2 != 0) {
+    cl <- c / 2
+    cr <- c / 2
+  } else {
+    cl <- c / 2
+    cr <- c / 2 + 1
+  }
+  cat(strrep('-', 30-cl), col, strrep('-', 30-cr), "\n")
+
+  cat("NAs: " , sum(is.na(salaries[,col])), "\n")
+}
 ```
