@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/RealState.iml" filepath="$PROJECT_DIR$/.idea/RealState.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Titanic/.idea/Titanic.iml" filepath="$PROJECT_DIR$/../Titanic/.idea/Titanic.iml" />
+    </modules>
+  </component>
+</project>
