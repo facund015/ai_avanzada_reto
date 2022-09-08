@@ -1,0 +1,72 @@
+---
+title: "Momento de Retroalimentacion 2 - Modulo 1"
+author: "Facundo Vecchi A01283666"
+date: "8 de septiembre de 2022"
+output: pdf_document
+---
+
+# Importacion de datos
+
+```{r}
+library(dplyr)
+library(modeest)
+data <- read.csv("mercurio.csv")
+colnames(data) <- c("Id", "Lago", "Alcalinidad", "PH", "Calcio", "Clorofila", "con_med_mercurio",
+                    "num_peces", "min_con_mercurio", "max_con_mercurio", "prom_mercurio_", "edad")
+```
+
+# Descripcion de datos
+
+```{r}
+data_temp <- subset(data, select = -Id)
+
+for (col in names(data_temp)) {
+  if (class(data_temp[, col]) == "integer" | class(data_temp[, col]) == "numeric") {
+    c <- nchar(col)
+    cl <- 0
+    cr <- 0
+    if (c %% 2 != 0) {
+      cl <- c / 2
+      cr <- c / 2
+    } else {
+      cl <- c / 2
+      cr <- c / 2 + 1
+    }
+
+
+    cat(strrep('-', 30 - cl), col, strrep('-', 30 - cr), "\n")
+    cat("Promedio: ", mean(data_temp[, col]), " ",
+        "Mediana: ", median(data_temp[, col]), " ",
+        "Moda: ", mfv(data_temp[, col]), "\n")
+    cat("Desviacion estandar: ", sd(data_temp[, col]),
+        " ", "Varianza: ", var(data_temp[, col]), "\n")
+    cat("Minimo: ", min(data_temp[, col]), " ",
+        "Maximo: ", max(data_temp[, col]), "\n")
+    cat("\n")
+  }
+}
+
+for (col in names(data_temp)) {
+  if (class(data_temp[, col]) == "character") {
+    c <- nchar(col)
+    cl <- 0
+    cr <- 0
+    if (c %% 2 != 0) {
+      cl <- c / 2
+      cr <- c / 2
+    } else {
+      cl <- c / 2
+      cr <- c / 2 + 1
+    }
+
+
+    cat(strrep('-', 30 - cl), col, strrep('-', 30 - cr), "\n")
+    cat("Moda: ", mfv(data_temp[, col]), "\n")
+    cat("\n")
+    print(table(data_temp[, col]))
+    cat("\n")
+  }
+}
+```
+
+#
