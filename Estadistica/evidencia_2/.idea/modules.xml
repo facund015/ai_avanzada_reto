@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/.idea/Clases.iml" filepath="$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/.idea/Clases.iml" />
       <module fileurl="file://$PROJECT_DIR$/../evidencia_1/.idea/evidencia_1.iml" filepath="$PROJECT_DIR$/../evidencia_1/.idea/evidencia_1.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/evidencia_2.iml" filepath="$PROJECT_DIR$/.idea/evidencia_2.iml" />
     </modules>

@@ -7,6 +7,27 @@
   <component name="RMarkdownSettings">
     <option name="renderProfiles">
       <map>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/AlCorte_.Rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/LinearModel.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/alcorte.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/../evidencia_1/main.rmd">
           <value>
             <RMarkdownRenderProfile>

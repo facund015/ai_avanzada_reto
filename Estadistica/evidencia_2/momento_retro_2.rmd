@@ -5,17 +5,24 @@ date: "8 de septiembre de 2022"
 output: pdf_document
 ---
 
-# Importacion de datos
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(printr)
+```
+
+#### Importacion de datos y librerias
 
 ```{r}
 library(dplyr)
 library(modeest)
+library(Hmisc)
+
 data <- read.csv("mercurio.csv")
 colnames(data) <- c("Id", "Lago", "Alcalinidad", "PH", "Calcio", "Clorofila", "con_med_mercurio",
-                    "num_peces", "min_con_mercurio", "max_con_mercurio", "prom_mercurio_", "edad")
+                    "num_peces", "min_con_mercurio", "max_con_mercurio", "prom_mercurio_pez", "edad")
 ```
 
-# Descripcion de datos
+## Descripcion de datos
 
 ```{r}
 data_temp <- subset(data, select = -Id)
@@ -69,4 +76,103 @@ for (col in names(data_temp)) {
 }
 ```
 
-#
+## Quartiles
+```{r}
+
+for (col in names(data_temp)) {
+  if (class(data_temp[, col]) == "integer" | class(data_temp[, col]) == "numeric") {
+    x <- data_temp[, col]
+    q <- quantile(x, c(0.25, 0.75))
+    ri <- q[2] - q[1]
+
+    c <- nchar(col)
+    cl <- 0
+    cr <- 0
+    if (c %% 2 != 0) {
+      cl <- c / 2
+      cr <- c / 2
+    } else {
+      cl <- c / 2
+      cr <- c / 2 + 1
+    }
+
+
+    cat(strrep('-', 30 - cl), col, strrep('-', 30 - cr), "\n")
+    cat("Quartil 1: ", q[1], " ", "Quartil 3: ", q[2], "\n")
+    boxplot(x, main = col, las = 2, xlab = "", ylab = "", horizontal = TRUE)
+    abline(v = q[1] - 1.5 * ri, lty = 2, col = "red")
+    abline(v = q[2] + 1.5 * ri, lty = 2, col = "red")
+    abline(v = q[1] - 3 * ri, lty = 2, col = "blue")
+    abline(v = q[2] + 3 * ri, lty = 2, col = "blue")
+  }
+}
+
+```
+
+## Histogramas y correlaciones
+
+```{r}
+library(GGally)
+data_nums_only <- subset(data, select = -c(Id, Lago))
+ggpairs(data_nums_only, lower = list(continuous = "smooth"),
+        diag = list(continuous = "barDiag"), axisLabels = "none")
+```
+
+## Regresion lineal multiple con todas las variables
+```{r}
+rl <- lm(con_med_mercurio ~ ., data = data_nums_only)
+summary(rl)
+```
+
+## Busqueda del mejor modelo
+```{r}
+step(rl, direction = "both", trace = 0)
+```
+
+## Regresion lineal multiple con el mejor modelo
+```{r}
+rl_best <- lm(formula = con_med_mercurio ~ num_peces + min_con_mercurio +
+        max_con_mercurio + prom_mercurio_pez, data = data_nums_only)
+summary(rl_best)
+```
+
+## Ecuacion de la regresion lineal multiple
+```{r}
+cat("con_med_mercurio = ", round(rl_best$coefficients[1], 4), " +",
+    round(rl_best$coefficients[2], 4), "* num_peces +",
+    round(rl_best$coefficients[3], 4), "* min_con_mercurio +",
+    round(rl_best$coefficients[4], 4), "* max_con_mercurio +",
+    round(rl_best$coefficients[5], 4), "* prom_mercurio_pez")
+
+cat("\n----------------------------------------------------------------------\n")
+cat("y = ", round(rl_best$coefficients[1], 4), "+",
+    round(rl_best$coefficients[2], 4), "* x1 +",
+    round(rl_best$coefficients[3], 4), "* x2 +",
+    round(rl_best$coefficients[4], 4), "* x3 +",
+    round(rl_best$coefficients[5], 4), "* x4")
+```
+
+## Validacion del modelo
+### Pruebas de hipotesis
+```{r}
+s <- summary(rl_best)
+alpha <- 0.05
+n <- nrow(data_nums_only)
+t0 <- abs(qt(alpha / 2, n - 5))
+tes <- s$coefficients[2:5, 3]
+
+for (i in 1:4) {
+  if (tes[i] > t0 & s$coefficients[i + 1, 4] < alpha) {
+    cat("La variable", names(rl_best$coefficients)[i + 1], "es significativa. (t* > t0)\n",
+        "t* =", round(tes[i], 4), ", t0 =", round(t0, 4), "\n")
+  } else {
+    cat("La variable", names(rl_best$coefficients)[i + 1], "no es significativa. (t* < t0)\n",
+        "t* =", round(tes[i], 4), ", t0 =", round(t0, 4), "\n")
+  }
+}
+```
+### Normalidad de los residuos
+```{r}
+shapiro.test(rl_best$residuals)
+```
+
