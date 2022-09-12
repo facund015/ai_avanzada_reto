@@ -174,5 +174,6 @@ for (i in 1:4) {
 ### Normalidad de los residuos
 ```{r}
 shapiro.test(rl_best$residuals)
+t.test(rl_best$residuals)
 ```
 
