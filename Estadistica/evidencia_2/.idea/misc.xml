@@ -14,6 +14,20 @@
             </RMarkdownRenderProfile>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/Discriminacion.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/Enlatados.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/LinearModel.rmd">
           <value>
             <RMarkdownRenderProfile>
@@ -21,7 +35,21 @@
             </RMarkdownRenderProfile>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/Tiempos_de_secado.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/alcorte.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases/anova.rmd">
           <value>
             <RMarkdownRenderProfile>
               <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/../../../Tec_Stuff/Ai_Avanzada/Estadistica/Clases" />
@@ -38,6 +66,7 @@
         <entry key="file://$PROJECT_DIR$/momento_retro_2.rmd">
           <value>
             <RMarkdownRenderProfile>
+              <option name="lastOutput" value="$PROJECT_DIR$/momento_retro_2.pdf" />
               <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$" />
             </RMarkdownRenderProfile>
           </value>

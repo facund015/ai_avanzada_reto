@@ -16,10 +16,16 @@ library(printr)
 library(dplyr)
 library(modeest)
 library(Hmisc)
+library(reshape2)
+library(ggplot2)
+library(car)
+
+
 
 data <- read.csv("mercurio.csv")
 colnames(data) <- c("Id", "Lago", "Alcalinidad", "PH", "Calcio", "Clorofila", "con_med_mercurio",
                     "num_peces", "min_con_mercurio", "max_con_mercurio", "prom_mercurio_pez", "edad")
+
 ```
 
 ## Descripcion de datos
@@ -112,15 +118,34 @@ for (col in names(data_temp)) {
 ## Histogramas y correlaciones
 
 ```{r}
-library(GGally)
 data_nums_only <- subset(data, select = -c(Id, Lago))
-ggpairs(data_nums_only, lower = list(continuous = "smooth"),
-        diag = list(continuous = "barDiag"), axisLabels = "none")
+hist.data.frame(data_nums_only, nclass = 10, main = "Histogramas de variables numericas")
+```
+
+
+
+
+```{r}
+corr_mat <- cor(data_nums_only)
+corr_mat <- melt(corr_mat)
+
+ggplot(corr_mat, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  geom_text(aes(label = round(value, 2)), size = 3) +
+  scale_fill_gradient2(low = "red", mid = "white", high = "skyblue", midpoint = 0, limit = c(-1, 1), space = "Lab", name = "Correlation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  coord_fixed()
+```
+
+## Excluimos variables con correlacion alta entre ellas
+```{r}
+data_clean <- subset(data_nums_only, select=-c(min_con_mercurio, max_con_mercurio, PH, Calcio, Clorofila))
 ```
 
 ## Regresion lineal multiple con todas las variables
 ```{r}
-rl <- lm(con_med_mercurio ~ ., data = data_nums_only)
+rl <- lm(con_med_mercurio ~ ., data = data_clean)
 summary(rl)
 ```
 
@@ -131,25 +156,15 @@ step(rl, direction = "both", trace = 0)
 
 ## Regresion lineal multiple con el mejor modelo
 ```{r}
-rl_best <- lm(formula = con_med_mercurio ~ num_peces + min_con_mercurio +
-        max_con_mercurio + prom_mercurio_pez, data = data_nums_only)
+rl_best <- lm(formula = con_med_mercurio ~ prom_mercurio_pez, data = data_clean)
 summary(rl_best)
 ```
 
 ## Ecuacion de la regresion lineal multiple
 ```{r}
 cat("con_med_mercurio = ", round(rl_best$coefficients[1], 4), " +",
-    round(rl_best$coefficients[2], 4), "* num_peces +",
-    round(rl_best$coefficients[3], 4), "* min_con_mercurio +",
-    round(rl_best$coefficients[4], 4), "* max_con_mercurio +",
-    round(rl_best$coefficients[5], 4), "* prom_mercurio_pez")
+    round(rl_best$coefficients[2], 4), "* max_con_mercurio")
 
-cat("\n----------------------------------------------------------------------\n")
-cat("y = ", round(rl_best$coefficients[1], 4), "+",
-    round(rl_best$coefficients[2], 4), "* x1 +",
-    round(rl_best$coefficients[3], 4), "* x2 +",
-    round(rl_best$coefficients[4], 4), "* x3 +",
-    round(rl_best$coefficients[5], 4), "* x4")
 ```
 
 ## Validacion del modelo
@@ -159,21 +174,94 @@ s <- summary(rl_best)
 alpha <- 0.05
 n <- nrow(data_nums_only)
 t0 <- abs(qt(alpha / 2, n - 5))
-tes <- s$coefficients[2:5, 3]
-
-for (i in 1:4) {
-  if (tes[i] > t0 & s$coefficients[i + 1, 4] < alpha) {
-    cat("La variable", names(rl_best$coefficients)[i + 1], "es significativa. (t* > t0)\n",
+tes <- s$coefficients[, 3]
+for (i in 2:(length(tes))) {
+  if (tes[i] > t0 & s$coefficients[i, 4] < alpha) {
+    cat("La variable", names(rl_best$coefficients)[i], "es significativa. (t* > t0)\n",
         "t* =", round(tes[i], 4), ", t0 =", round(t0, 4), "\n")
   } else {
-    cat("La variable", names(rl_best$coefficients)[i + 1], "no es significativa. (t* < t0)\n",
+    cat("La variable", names(rl_best$coefficients)[i], "no es significativa. (t* < t0)\n",
         "t* =", round(tes[i], 4), ", t0 =", round(t0, 4), "\n")
   }
 }
 ```
+## Verificación de supuestos
 ### Normalidad de los residuos
 ```{r}
-shapiro.test(rl_best$residuals)
-t.test(rl_best$residuals)
+E<-rl_best$residuals
+Y<-rl_best$fitted.values
+
+qqnorm(E)
+qqline(E,col="red")
+
+hist(E,col="lightcyan",freq=FALSE,main="Histograma de Residuos",xlab="",ylab="Densidad", ylim=c(0,max(density(E)$y)))
+lines(density(E),col="red")
+curve(dnorm(x,mean=mean(E),sd=sd(E)), add=TRUE, col="blue",lwd=2)
+
+shapiro.test(E)
 ```
 
+### Homocedasticidad y modelo apropiado
+
+Gráfica Valores estimados vs Residuos
+
+```{r}
+plot(Y,E,ylab="Residuos",xlab="Valores estimados",pch=20,col="red")
+abline(h=0,col="red")
+text(Y[],E[],1:30,cex=0.8,pos=3,offset=0.2)
+```
+
+### Independencia
+
+Errores vs Orden de observación
+
+```{r}
+n<-length(data_clean$con_med_mercurio)
+plot(c(1:n),rl_best$residuals,type="l",xlab="Orden de las observaciones",ylab="Residuos")
+abline(h=0,col="red")
+```
+
+```{r}
+#Prueba de autocorrelación para verificar independencia: H0: rho=0
+
+dwt(rl_best,alternative="two.sided")
+```
+
+## Datos atípicos o influyentes
+
+### Datos atípicos
+
+Se estandarizan los residuos y se observa si hay distancias mayores a 3.
+
+```{r}
+library(dplyr)
+data_clean$residuos_estandarizados <- rstudent(rl_best)  #Introduce una columna en data_clean con los residuos del modelo estandarizados
+
+ggplot(data = data_clean, aes(x = predict(rl_best), y = abs(residuos_estandarizados))) +
+        geom_hline(yintercept = 3, color = "red", linetype = "dashed") +
+        # se identifican en rojo observaciones con residuos estandarizados absolutos > 3
+        geom_point(aes(color = ifelse(abs(residuos_estandarizados) > 3, 'red', 'black'))) +
+        scale_color_identity() +
+        labs(title = "Distribucion de los residuos estandarizados",x = "prediccion modelo") +
+        theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+
+which(abs(data_clean$residuos_estandarizados)>3)
+
+```
+
+### Datos influyentes
+
+```{r}
+summary(influence.measures(rl_best))
+```
+
+
+Se consideran influyentes aquellas observaciones:
+
+* que tengan leverages mayores a 2.5(p+1)/n = 2.5*3/30 =2.5/10 0.25
+* que tengan distancia de Cook superiores a 4/n.
+
+
+```{r}
+influencePlot(rl_best)
+```
